@@ -1,4 +1,20 @@
+import os
+from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+from sentence_transformers import SentenceTransformer
+from chroma_db import Client
+
+load_dotenv()
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite-preview-06-17",
+    google_api_key= os.getenv("GOOGLE_API_KEY")
+)
+
 model = SentenceTransformer('all-MiniLM-L6-v2')
+
+Chroma_client = Client()
+collection = Chroma_client.get_or_create_collection(name="student_reviews")
 
 def get_embedding(text):
     return model.encode(text)
