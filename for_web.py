@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from sentence_transformers import SentenceTransformer
-from chroma_db import Client
+import chromadb 
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ llm = ChatGoogleGenerativeAI(
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-Chroma_client = Client()
+Chroma_client = chromadb.Client()
 collection = Chroma_client.get_or_create_collection(name="student_reviews")
 
 def get_embedding(text):
@@ -53,6 +53,6 @@ def rag_pipeline(query, k=5):
     prompt = generate_prompt(query, retrieved_documents)
 
     # Generate the answer using the language model
-    answer = llm.invoke(prompt)
+    answer = llm.invoke(prompt).content
 
     return answer, retrieved_documents, metadatas
