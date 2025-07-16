@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+streamlit
+pandas
+openpyxl
+psutil
+langchain
+langchain-community
+langchain-chroma
+langchain-huggingface
+chromadb
+transformers
