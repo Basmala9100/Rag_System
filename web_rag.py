@@ -5,7 +5,7 @@ import psutil
 import platform
 import os
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 from preprocessing import preprocess_data, make_chunks
 from rag_core import embed_and_store, rag_query
 
@@ -31,7 +31,7 @@ def system_info():
 def main():
     st.title("📊 RAG System - Streamlit Interface")
     st.write("Upload your Excel/CSV file and ask questions!")
-=======
+#=======
 if 'query_count' not in st.session_state:
     st.session_state.query_count = 0
 
@@ -71,7 +71,7 @@ def main():
                 st.write("Answer:", answer)
         elif submit:
             st.warning("Please enter a question before submitting.")
->>>>>>> e9676e9411fd01e701bd20815c2534deee73e802
+#>>>>>>> e9676e9411fd01e701bd20815c2534deee73e802
 
     system_info()  # Show system info in sidebar
 
