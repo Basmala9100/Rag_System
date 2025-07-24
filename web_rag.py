@@ -4,8 +4,9 @@ import pandas as pd
 import psutil
 import platform
 import os
+from for_web import rag_pipeline
 
-<<<<<<< HEAD
+
 from preprocessing import preprocess_data, make_chunks
 from rag_core import embed_and_store, rag_query
 
@@ -31,7 +32,7 @@ def system_info():
 def main():
     st.title("📊 RAG System - Streamlit Interface")
     st.write("Upload your Excel/CSV file and ask questions!")
-=======
+
 if 'query_count' not in st.session_state:
     st.session_state.query_count = 0
 
@@ -58,25 +59,15 @@ def main():
     st.set_page_config(page_title="RAG Q&A", layout="centered")
     st.title("RAG Chat")
     st.write("Welcome to the RAG Q&A system!")
-    
-    with st.form("query_form"):
-        user_question = st.text_input("Enter your question:", key="query_input")
-        submit = st.form_submit_button("Ask")
-        
-        if submit and user_question:
-            with st.spinner("Processing your question..."):
-                answer, documents, metadatas = rag_pipeline(user_question)
-                st.session_state.query_count += 1
-                
-                st.write("Answer:", answer)
-        elif submit:
-            st.warning("Please enter a question before submitting.")
->>>>>>> e9676e9411fd01e701bd20815c2534deee73e802
 
-    system_info()  # Show system info in sidebar
+    system_info()  # Sidebar info
 
+    # Initialize session state
+    if 'vectorstore' not in st.session_state:
+        st.session_state.vectorstore = None
+
+    # Upload section
     uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
-
     if uploaded_file:
         if uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
@@ -86,24 +77,34 @@ def main():
         st.subheader("Data Preview")
         st.dataframe(df.head())
 
+        # Preprocessing and embedding
         texts = preprocess_data(df)
         chunks = make_chunks(texts)
 
-        st.info("Embedding and storing data... Please wait.")
-        vectorstore = embed_and_store(chunks)
+        with st.spinner("Embedding and storing data... Please wait."):
+            st.session_state.vectorstore = embed_and_store(chunks)
 
         st.success("Data indexed successfully! You can now ask questions.")
 
-        query = st.text_input("Ask your question:")
+    # Question form (works only if vectorstore is ready)
+    if st.session_state.vectorstore:
+        with st.form("query_form"):
+            user_question = st.text_input("Enter your question:")
+            submitted = st.form_submit_button("Ask")
 
-        if query:
-            answer, docs = rag_query(query, vectorstore)
-            st.subheader("Answer")
-            st.write(answer)
+            if submitted and user_question:
+                with st.spinner("Processing your question..."):
+                    answer, docs = rag_query(user_question, st.session_state.vectorstore)
+                    st.session_state.query_count += 1
+                    st.subheader("Answer")
+                    st.write(answer)
 
-            with st.expander("Show Retrieved Documents"):
-                for doc in docs:
-                    st.write(doc.page_content)
+                    with st.expander("Show Retrieved Documents"):
+                        for doc in docs:
+                            st.write(doc.page_content)
+            elif submitted:
+                st.warning("Please enter a question before submitting.")
+
 
 if __name__ == "__main__":
     main()
