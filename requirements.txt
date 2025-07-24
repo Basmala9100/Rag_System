@@ -12,3 +12,4 @@ chromadb
 transformers
 langchain-google-genai
 nltk
+sentence-transformers
