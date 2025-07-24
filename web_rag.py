@@ -60,6 +60,20 @@ def main():
     st.title("RAG Chat")
     st.write("Welcome to the RAG Q&A system!")
 
+    with st.form("query_form"):
+        user_question = st.text_input("Enter your question:", key="query_input")
+        submit = st.form_submit_button("Ask")
+        
+        if submit and user_question:
+            with st.spinner("Processing your question..."):
+                answer, documents, metadatas = rag_pipeline(user_question)
+                st.session_state.query_count += 1
+                
+                st.write("Answer:", answer)
+        elif submit:
+            st.warning("Please enter a question before submitting.")
+
+
     system_info()  # Sidebar info
 
     # Initialize session state
