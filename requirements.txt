@@ -10,3 +10,5 @@ langchain-chroma
 langchain-huggingface
 chromadb
 transformers
+langchain-google-genai
+nltk
